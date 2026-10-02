@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A1B2C3D4E5F6789012345678 /* AnchordApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52F3508E55E6E636EDC8E69 /* AnchordApp.swift */; };
+		0A1B2C3D4E5F6789012345679 /* SongProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBABF866545476E82DDB34D8 /* SongProject.swift */; };
+		0A1B2C3D4E5F678901234567A /* PromptDNA.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD4D78550FAC035C49B1E395 /* PromptDNA.swift */; };
+		0A1B2C3D4E5F678901234567B /* LocalModelDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */; };
+		0A1B2C3D4E5F678901234567C /* CadenceAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D60B65DFC43D288DE8C4B9 /* CadenceAnalyzer.swift */; };
+		0A1B2C3D4E5F678901234567D /* AIProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AA46D8B84A47F74717BD63 /* AIProvider.swift */; };
+		0A1B2C3D4E5F678901234567E /* AppleFoundationModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC4A6882A7ECE6465A776CE4 /* AppleFoundationModelProvider.swift */; };
+		0A1B2C3D4E5F678901234567F /* LocalModelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4581D1E55789B9A292A0F793 /* LocalModelProvider.swift */; };
+		0A1B2C3D4E5F6789012345680 /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 545EE9D22CC68DDA2E52FBED /* AIService.swift */; };
+		0A1B2C3D4E5F6789012345681 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B795C758E933F053948E79 /* RootView.swift */; };
+		0A1B2C3D4E5F6789012345682 /* SongEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */; };
+		0A1B2C3D4E5F6789012345683 /* ModelManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		D52F3508E55E6E636EDC8E69 /* AnchordApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchordApp.swift; sourceTree = "<group>"; };
+		FBABF866545476E82DDB34D8 /* SongProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongProject.swift; sourceTree = "<group>"; };
+		FD4D78550FAC035C49B1E395 /* PromptDNA.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptDNA.swift; sourceTree = "<group>"; };
+		B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalModelDescriptor.swift; sourceTree = "<group>"; };
+		20D60B65DFC43D288DE8C4B9 /* CadenceAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CadenceAnalyzer.swift; sourceTree = "<group>"; };
+		11AA46D8B84A47F74717BD63 /* AIProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProvider.swift; sourceTree = "<group>"; };
+		AC4A6882A7ECE6465A776CE4 /* AppleFoundationModelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleFoundationModelProvider.swift; sourceTree = "<group>"; };
+		4581D1E55789B9A292A0F793 /* LocalModelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalModelProvider.swift; sourceTree = "<group>"; };
+		545EE9D22CC68DDA2E52FBED /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
+		73B795C758E933F053948E79 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongEditorView.swift; sourceTree = "<group>"; };
+		9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManagerView.swift; sourceTree = "<group>"; };
+		58A95EB86FDC85C8B882702A /* Anchord.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Anchord.entitlements; sourceTree = "<group>"; };
+		F5BF48AA40CAD7891EB709FC /* Anchord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Anchord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4F6F5CC3FCCF73F75AE9CCF4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DB0F6F37EBEB6EA094891243 /* Anchord */ = {
+			isa = PBXGroup;
+			children = (
+				D52F3508E55E6E636EDC8E69 /* AnchordApp.swift */,
+				AC5552FD6A3C08AD22387EFB /* Models */,
+				4921C0E2D1F6005ABE1F9EC2 /* AI */,
+				3B671C883959A8EF434B85A1 /* Analysis */,
+				59A14A5786FE7A105D780BB1 /* Views */,
+				58A95EB86FDC85C8B882702A /* Anchord.entitlements */,
+			);
+			path = "";
+			sourceTree = "<group>";
+		};
+		AC5552FD6A3C08AD22387EFB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FBABF866545476E82DDB34D8 /* SongProject.swift */,
+				FD4D78550FAC035C49B1E395 /* PromptDNA.swift */,
+				B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4921C0E2D1F6005ABE1F9EC2 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				11AA46D8B84A47F74717BD63 /* AIProvider.swift */,
+				AC4A6882A7ECE6465A776CE4 /* AppleFoundationModelProvider.swift */,
+				4581D1E55789B9A292A0F793 /* LocalModelProvider.swift */,
+				545EE9D22CC68DDA2E52FBED /* AIService.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		3B671C883959A8EF434B85A1 /* Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				20D60B65DFC43D288DE8C4B9 /* CadenceAnalyzer.swift */,
+			);
+			path = Analysis;
+			sourceTree = "<group>";
+		};
+		59A14A5786FE7A105D780BB1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				73B795C758E933F053948E79 /* RootView.swift */,
+				DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */,
+				9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F5BF48AA40CAD7891EB709FC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5BF48AA40CAD7891EB709FC /* Anchord.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* Anchord */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 42AEFBAE01D2DFD981F7DA7E /* Build configuration list for PBXNativeTarget "Anchord" */;
+			buildPhases = (
+				F2AB5FB218DA8B84623F4557 /* Sources */,
+				4F6F5CC3FCCF73F75AE9CCF4 /* Frameworks */,
+				55B558C7EF820E6E00E5993B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Anchord;
+			productName = Anchord;
+			productReference = F5BF48AA40CAD7891EB709FC /* Anchord.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					42AEFBAE01D2DFD981F7DA7D = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = 46F86FAA6BBF9AC94A7E4596 /* Build configuration list for PBXProject "Anchord" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DB0F6F37EBEB6EA094891243 /* Anchord */;
+			productRefGroup = F5BF48AA40CAD7891EB709FC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* Anchord */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		55B558C7EF820E6E00E5993B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F2AB5FB218DA8B84623F4557 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A1B2C3D4E5F6789012345678 /* AnchordApp.swift in Sources */,
+				0A1B2C3D4E5F6789012345679 /* SongProject.swift in Sources */,
+				0A1B2C3D4E5F678901234567A /* PromptDNA.swift in Sources */,
+				0A1B2C3D4E5F678901234567B /* LocalModelDescriptor.swift in Sources */,
+				0A1B2C3D4E5F678901234567C /* CadenceAnalyzer.swift in Sources */,
+				0A1B2C3D4E5F678901234567D /* AIProvider.swift in Sources */,
+				0A1B2C3D4E5F678901234567E /* AppleFoundationModelProvider.swift in Sources */,
+				0A1B2C3D4E5F678901234567F /* LocalModelProvider.swift in Sources */,
+				0A1B2C3D4E5F6789012345680 /* AIService.swift in Sources */,
+				0A1B2C3D4E5F6789012345681 /* RootView.swift in Sources */,
+				0A1B2C3D4E5F6789012345682 /* SongEditorView.swift in Sources */,
+				0A1B2C3D4E5F6789012345683 /* ModelManagerView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		100000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		100000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		100000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Anchord;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Anchord may use the camera for future creative workflows.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.anch-dev.Anchord";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		100000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Anchord;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Anchord may use the camera for future creative workflows.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.anch-dev.Anchord";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		46F86FAA6BBF9AC94A7E4596 /* Build configuration list for PBXProject "Anchord" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000001,
+				100000000000000000000002,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		42AEFBAE01D2DFD981F7DA7E /* Build configuration list for PBXNativeTarget "Anchord" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000003,
+				100000000000000000000004,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
