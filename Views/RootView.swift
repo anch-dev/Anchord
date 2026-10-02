@@ -5,14 +5,19 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \\.updatedAt, order: .reverse) private var projects: [SongProject]
 
-    @State private var selectedProject: SongProject?
+    @State private var selectedProjectID: UUID?
+
+    private var selectedProject: SongProject? {
+        guard let selectedProjectID else { return nil }
+        return projects.first(where: { $0.id == selectedProjectID })
+    }
 
     var body: some View {
         NavigationSplitView {
-            List(selection: $selectedProject) {
+            List(selection: $selectedProjectID) {
                 Section("Songs") {
                     ForEach(projects) { project in
-                        NavigationLink(value: project) {
+                        NavigationLink(value: project.id) {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(project.title)
                                     .font(.headline)
@@ -24,13 +29,18 @@ struct RootView: View {
                     }
                 }
             }
+            .navigationDestination(for: UUID.self) { id in
+                if let project = projects.first(where: { $0.id == id }) {
+                    SongEditorView(project: project)
+                }
+            }
             .navigationTitle("Anchord")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         let project = SongProject()
                         modelContext.insert(project)
-                        selectedProject = project
+                        selectedProjectID = project.id
                     } label: {
                         Label("New Song", systemImage: "plus")
                     }
@@ -48,8 +58,8 @@ struct RootView: View {
             }
         }
         .onAppear {
-            if selectedProject == nil {
-                selectedProject = projects.first
+            if selectedProjectID == nil {
+                selectedProjectID = projects.first?.id
             }
         }
     }
