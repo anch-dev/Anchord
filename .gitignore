@@ -1,0 +1,22 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager caches
+.build/
+.swiftpm/
+
+# Local model weights — never commit downloaded models
+Models/Downloaded/
+*.gguf
+*.safetensors
+*.mlmodelc
+
+# Secrets
+.env
+*.secret
