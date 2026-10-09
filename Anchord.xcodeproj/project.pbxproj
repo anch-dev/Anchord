@@ -19,6 +19,13 @@
 		0A1B2C3D4E5F6789012345681 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B795C758E933F053948E79 /* RootView.swift */; };
 		0A1B2C3D4E5F6789012345682 /* SongEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */; };
 		0A1B2C3D4E5F6789012345683 /* ModelManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */; };
+		E59647D1F135D7F0207B58B0 /* MusicTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */; };
+		835EAD3CAF491CE40D5B7214 /* TagDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10703B74AA60A07C19062EA9 /* TagDatabase.swift */; };
+		CE9790E00D35E3AD29403040 /* FusionRandomizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82911F1223D341683CADD6A /* FusionRandomizer.swift */; };
+		EEFF63DC3845CB23E70E3978 /* PromptRoleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E8A7554ADA2A1EF17A2A5E /* PromptRoleEngine.swift */; };
+		E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */; };
+		583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */; };
+		73E20482247D4030C42668A9 /* MusicTags.tsv in Resources */ = {isa = PBXBuildFile; fileRef = 19A79D72582C9FDCB3A87363 /* MusicTags.tsv */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +43,13 @@
 		9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelManagerView.swift; sourceTree = "<group>"; };
 		58A95EB86FDC85C8B882702A /* Anchord.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Anchord.entitlements; sourceTree = "<group>"; };
 		F5BF48AA40CAD7891EB709FC /* Anchord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Anchord.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTag.swift; sourceTree = "<group>"; };
+		10703B74AA60A07C19062EA9 /* TagDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagDatabase.swift; sourceTree = "<group>"; };
+		D82911F1223D341683CADD6A /* FusionRandomizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FusionRandomizer.swift; sourceTree = "<group>"; };
+		63E8A7554ADA2A1EF17A2A5E /* PromptRoleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptRoleEngine.swift; sourceTree = "<group>"; };
+		874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunoPromptGenerator.swift; sourceTree = "<group>"; };
+		1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FusionBuilderView.swift; sourceTree = "<group>"; };
+		19A79D72582C9FDCB3A87363 /* MusicTags.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MusicTags.tsv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +71,9 @@
 				4921C0E2D1F6005ABE1F9EC2 /* AI */,
 				3B671C883959A8EF434B85A1 /* Analysis */,
 				59A14A5786FE7A105D780BB1 /* Views */,
+				08C2507A27EEDEC72A9CC889 /* Data */,
+				9A1FCB9BAA0CEB64632B7709 /* Engine */,
+				9EBEE23E044D6BD2F911D78B /* Resources */,
 				58A95EB86FDC85C8B882702A /* Anchord.entitlements */,
 			);
 			path = "";
@@ -68,6 +85,7 @@
 				FBABF866545476E82DDB34D8 /* SongProject.swift */,
 				FD4D78550FAC035C49B1E395 /* PromptDNA.swift */,
 				B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */,
+				91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -97,6 +115,7 @@
 				73B795C758E933F053948E79 /* RootView.swift */,
 				DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */,
 				9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */,
+				1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -107,6 +126,32 @@
 				F5BF48AA40CAD7891EB709FC /* Anchord.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		08C2507A27EEDEC72A9CC889 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				10703B74AA60A07C19062EA9 /* TagDatabase.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		9A1FCB9BAA0CEB64632B7709 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				D82911F1223D341683CADD6A /* FusionRandomizer.swift */,
+				63E8A7554ADA2A1EF17A2A5E /* PromptRoleEngine.swift */,
+				874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		9EBEE23E044D6BD2F911D78B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				19A79D72582C9FDCB3A87363 /* MusicTags.tsv */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73E20482247D4030C42668A9 /* MusicTags.tsv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +235,12 @@
 				0A1B2C3D4E5F6789012345681 /* RootView.swift in Sources */,
 				0A1B2C3D4E5F6789012345682 /* SongEditorView.swift in Sources */,
 				0A1B2C3D4E5F6789012345683 /* ModelManagerView.swift in Sources */,
+				E59647D1F135D7F0207B58B0 /* MusicTag.swift in Sources */,
+				835EAD3CAF491CE40D5B7214 /* TagDatabase.swift in Sources */,
+				CE9790E00D35E3AD29403040 /* FusionRandomizer.swift in Sources */,
+				EEFF63DC3845CB23E70E3978 /* PromptRoleEngine.swift in Sources */,
+				E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */,
+				583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

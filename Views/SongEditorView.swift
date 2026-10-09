@@ -6,6 +6,7 @@ struct SongEditorView: View {
     @State private var selectedTab: EditorTab = .lyrics
     @State private var analysis = ""
     @State private var isShowingModels = false
+    @State private var isShowingFusionBuilder = false
 
     private let analyzer = CadenceAnalyzer()
 
@@ -57,6 +58,9 @@ struct SongEditorView: View {
         .sheet(isPresented: $isShowingModels) {
             ModelManagerView()
         }
+        .sheet(isPresented: $isShowingFusionBuilder) {
+            FusionBuilderView(project: project)
+        }
         .onChange(of: project.lyrics) {
             project.updatedAt = .now
         }
@@ -97,16 +101,45 @@ struct SongEditorView: View {
 
     private var promptEditor: some View {
         Form {
-            Section("Sound Direction") {
+            Section {
+                Button {
+                    isShowingFusionBuilder = true
+                } label: {
+                    Label(
+                        project.promptDNA.selectedTags.isEmpty ? "Build with Fusion Engine" : "Edit Fusion",
+                        systemImage: "wand.and.stars"
+                    )
+                }
+                if !project.promptDNA.selectedTags.isEmpty {
+                    fusionSummary(project.promptDNA)
+                }
+            } header: {
+                Text("Dataset-Driven Prompt Generator")
+            } footer: {
+                Text("Randomizes or hand-picks tags from 215,240 real Suno dataset tags, weighted by rarity, and translates them into a style prompt. Edit the text below by hand afterward if you want.")
+            }
+
+            Section("Sound Direction (POS)") {
                 TextField("Genre / fusion", text: $project.genre)
                 TextEditor(text: $project.soundPrompt)
                     .frame(minHeight: 180)
             }
 
-            Section("Negative Prompt") {
+            Section("Negative Prompt (NEG)") {
                 TextEditor(text: $project.negativePrompt)
                     .frame(minHeight: 140)
             }
+        }
+    }
+
+    private func fusionSummary(_ dna: PromptDNA) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("\(dna.mode.displayName) · \(dna.selectedTags.count) tags")
+                .font(.caption.bold())
+            Text(dna.allTagNames.joined(separator: " · "))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
         }
     }
 

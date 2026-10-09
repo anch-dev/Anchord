@@ -22,6 +22,22 @@ The goal is simple: help writers preserve **cadence, pocket, phonetic shape, and
 - Structured music-prompt builder
 - Model manager foundation
 
+## Dataset-driven Suno prompt engine
+
+The Song Editor's "Fusion Builder" is a native port of the prompt-generation
+system originally prototyped as a web app against the `nyuuzyou/suno`
+Hugging Face dataset (659,788 songs). `Resources/MusicTags.tsv` bundles the
+215,240 cleaned, spelling-corrected, categorized tags that survived that
+mining pass; `TagDatabase` loads it once at runtime, `FusionRandomizer`
+does rarity-weighted and category-balanced selection, `PromptRoleEngine`
+assigns each tag a musical function (rhythm/harmony/instrumentation/vocal/
+production/atmosphere/technique/texture/genre/arrangement), and
+`SunoPromptGenerator` turns a selection into a Suno-ready POS/NEG prompt
+pair under four distinct generation modes (Blended, Evolution, Hybrid,
+Sectioned), each with its own linguistic architecture rather than a shared
+template. See `Engine/` and `Data/` for the implementation, `Views/
+FusionBuilderView.swift` for the UI.
+
 ## Requirements
 
 - Xcode 26+
