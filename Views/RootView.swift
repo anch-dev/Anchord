@@ -3,7 +3,7 @@ import SwiftData
 
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \\.updatedAt, order: .reverse) private var projects: [SongProject]
+    @Query(sort: \.updatedAt, order: .reverse) private var projects: [SongProject]
 
     @State private var selectedProjectID: UUID?
 

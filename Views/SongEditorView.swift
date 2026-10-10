@@ -19,7 +19,7 @@ struct SongEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             Picker("Editor", selection: $selectedTab) {
-                ForEach(EditorTab.allCases, id: \\.self) { tab in
+                ForEach(EditorTab.allCases, id: \.self) { tab in
                     Text(tab.rawValue).tag(tab)
                 }
             }
