@@ -186,11 +186,14 @@ jobs:
           cp -r "$RUNNER_TEMP/Anchord.xcarchive/Products/Applications/Anchord.app" "$RUNNER_TEMP/ipa/Payload/"
           (cd "$RUNNER_TEMP/ipa" && zip -r -q Anchord-UNSIGNED.ipa Payload && rm -rf Payload)
 
+      # archive: false uploads the .ipa as-is, so the download is the .ipa
+      # itself rather than a .zip wrapping it. The artifact takes the file's
+      # name (the `name` input is ignored in this mode).
       - name: Upload IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: Anchord-ipa
           path: ${{ runner.temp }}/ipa/*.ipa
+          archive: false
           if-no-files-found: error
 
       - name: Upload .xcarchive (for debugging a failed export)
