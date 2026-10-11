@@ -26,6 +26,18 @@
 		E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */; };
 		583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */; };
 		73E20482247D4030C42668A9 /* MusicTags.tsv in Resources */ = {isa = PBXBuildFile; fileRef = 19A79D72582C9FDCB3A87363 /* MusicTags.tsv */; };
+		A17EB3FB9DD0D041247F68F1 /* SongVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A10E95A0560034F9EC53BB /* SongVersion.swift */; };
+		9547BAA9055C72022FF0FB34 /* PromptDNAComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A3F0F38A4F8F4B6B78FA2D /* PromptDNAComposer.swift */; };
+		64B601E63158663D47516956 /* SunoLyricsFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491FDD3627AFEB0F0A0D1D2D /* SunoLyricsFormatter.swift */; };
+		6BC5B405C1E8CE4DC3F8199C /* PhoneticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31BA3489CF8EEE3493BC9EFA /* PhoneticEngine.swift */; };
+		26EB2961B08D7835CCFB16D4 /* LocalInferenceRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B47DD23E9A5B059D6B2942A /* LocalInferenceRuntime.swift */; };
+		FA0A084E005FEC1A75C7ECD9 /* DeviceCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A7D0B35B04C6C8E8168E88 /* DeviceCapabilities.swift */; };
+		DED310077F523B5B1A0C9366 /* ModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68F501E2668838F28E28925 /* ModelStore.swift */; };
+		3EEC06F036F1EE5184D61F9A /* ModelDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5063A05D532E79EAE881A1 /* ModelDownloadManager.swift */; };
+		1D57508C3D71DB7BF13A6678 /* Clipboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B406CD784E9DD0A8BA3D17A2 /* Clipboard.swift */; };
+		5F144C54733885DC2111A302 /* LineRewriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */; };
+		7AE81B591CE294BA4BF6B4C2 /* SongVersionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */; };
+		27483440445F13AFAEE571CA /* ModelCatalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 912F8DE722C8AD32298E8D2C /* ModelCatalog.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +62,18 @@
 		874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunoPromptGenerator.swift; sourceTree = "<group>"; };
 		1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FusionBuilderView.swift; sourceTree = "<group>"; };
 		19A79D72582C9FDCB3A87363 /* MusicTags.tsv */ = {isa = PBXFileReference; lastKnownFileType = text; path = MusicTags.tsv; sourceTree = "<group>"; };
+		A6A10E95A0560034F9EC53BB /* SongVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongVersion.swift; sourceTree = "<group>"; };
+		A4A3F0F38A4F8F4B6B78FA2D /* PromptDNAComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptDNAComposer.swift; sourceTree = "<group>"; };
+		491FDD3627AFEB0F0A0D1D2D /* SunoLyricsFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunoLyricsFormatter.swift; sourceTree = "<group>"; };
+		31BA3489CF8EEE3493BC9EFA /* PhoneticEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneticEngine.swift; sourceTree = "<group>"; };
+		9B47DD23E9A5B059D6B2942A /* LocalInferenceRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalInferenceRuntime.swift; sourceTree = "<group>"; };
+		62A7D0B35B04C6C8E8168E88 /* DeviceCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilities.swift; sourceTree = "<group>"; };
+		F68F501E2668838F28E28925 /* ModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStore.swift; sourceTree = "<group>"; };
+		2C5063A05D532E79EAE881A1 /* ModelDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloadManager.swift; sourceTree = "<group>"; };
+		B406CD784E9DD0A8BA3D17A2 /* Clipboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clipboard.swift; sourceTree = "<group>"; };
+		2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineRewriteView.swift; sourceTree = "<group>"; };
+		40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongVersionsView.swift; sourceTree = "<group>"; };
+		912F8DE722C8AD32298E8D2C /* ModelCatalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ModelCatalog.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +97,8 @@
 				59A14A5786FE7A105D780BB1 /* Views */,
 				08C2507A27EEDEC72A9CC889 /* Data */,
 				9A1FCB9BAA0CEB64632B7709 /* Engine */,
+				5D11A9155B1EACD64A6720BE /* LocalModels */,
+				01C5182F35E74A681571F8CD /* Support */,
 				9EBEE23E044D6BD2F911D78B /* Resources */,
 				58A95EB86FDC85C8B882702A /* Anchord.entitlements */,
 			);
@@ -86,6 +112,7 @@
 				FD4D78550FAC035C49B1E395 /* PromptDNA.swift */,
 				B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */,
 				91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */,
+				A6A10E95A0560034F9EC53BB /* SongVersion.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -97,6 +124,7 @@
 				AC4A6882A7ECE6465A776CE4 /* AppleFoundationModelProvider.swift */,
 				4581D1E55789B9A292A0F793 /* LocalModelProvider.swift */,
 				545EE9D22CC68DDA2E52FBED /* AIService.swift */,
+				9B47DD23E9A5B059D6B2942A /* LocalInferenceRuntime.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -105,6 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				20D60B65DFC43D288DE8C4B9 /* CadenceAnalyzer.swift */,
+				31BA3489CF8EEE3493BC9EFA /* PhoneticEngine.swift */,
 			);
 			path = Analysis;
 			sourceTree = "<group>";
@@ -116,6 +145,8 @@
 				DA43F5E51B6A6C3053587BFC /* SongEditorView.swift */,
 				9ECA9773FC0311854C66FB0B /* ModelManagerView.swift */,
 				1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */,
+				2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */,
+				40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -142,6 +173,8 @@
 				D82911F1223D341683CADD6A /* FusionRandomizer.swift */,
 				63E8A7554ADA2A1EF17A2A5E /* PromptRoleEngine.swift */,
 				874C02E5D579BD6336AC8497 /* SunoPromptGenerator.swift */,
+				A4A3F0F38A4F8F4B6B78FA2D /* PromptDNAComposer.swift */,
+				491FDD3627AFEB0F0A0D1D2D /* SunoLyricsFormatter.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -150,8 +183,27 @@
 			isa = PBXGroup;
 			children = (
 				19A79D72582C9FDCB3A87363 /* MusicTags.tsv */,
+				912F8DE722C8AD32298E8D2C /* ModelCatalog.json */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		5D11A9155B1EACD64A6720BE /* LocalModels */ = {
+			isa = PBXGroup;
+			children = (
+				62A7D0B35B04C6C8E8168E88 /* DeviceCapabilities.swift */,
+				F68F501E2668838F28E28925 /* ModelStore.swift */,
+				2C5063A05D532E79EAE881A1 /* ModelDownloadManager.swift */,
+			);
+			path = LocalModels;
+			sourceTree = "<group>";
+		};
+		01C5182F35E74A681571F8CD /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				B406CD784E9DD0A8BA3D17A2 /* Clipboard.swift */,
+			);
+			path = Support;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				73E20482247D4030C42668A9 /* MusicTags.tsv in Resources */,
+				27483440445F13AFAEE571CA /* ModelCatalog.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,6 +294,17 @@
 				EEFF63DC3845CB23E70E3978 /* PromptRoleEngine.swift in Sources */,
 				E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */,
 				583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */,
+				A17EB3FB9DD0D041247F68F1 /* SongVersion.swift in Sources */,
+				9547BAA9055C72022FF0FB34 /* PromptDNAComposer.swift in Sources */,
+				64B601E63158663D47516956 /* SunoLyricsFormatter.swift in Sources */,
+				6BC5B405C1E8CE4DC3F8199C /* PhoneticEngine.swift in Sources */,
+				26EB2961B08D7835CCFB16D4 /* LocalInferenceRuntime.swift in Sources */,
+				FA0A084E005FEC1A75C7ECD9 /* DeviceCapabilities.swift in Sources */,
+				DED310077F523B5B1A0C9366 /* ModelStore.swift in Sources */,
+				3EEC06F036F1EE5184D61F9A /* ModelDownloadManager.swift in Sources */,
+				1D57508C3D71DB7BF13A6678 /* Clipboard.swift in Sources */,
+				5F144C54733885DC2111A302 /* LineRewriteView.swift in Sources */,
+				7AE81B591CE294BA4BF6B4C2 /* SongVersionsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

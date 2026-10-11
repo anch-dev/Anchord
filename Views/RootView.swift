@@ -161,6 +161,7 @@ struct RootView: View {
             genre: project.genre
         )
         copy.promptDNAData = project.promptDNAData
+        copy.sunoLyrics = project.sunoLyrics
         modelContext.insert(copy)
     }
 }

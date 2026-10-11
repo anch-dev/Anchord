@@ -1,159 +1,608 @@
 import SwiftUI
+import SwiftData
 
+/// The song workspace: write → analyze → build Prompt DNA → generate and
+/// refine Suno POS/NEG/LYRICS → save versions, all without leaving the
+/// song. The dataset-driven Fusion Builder is the prompt engine; AI
+/// features work on top of its output and Anchord's measurements.
 struct SongEditorView: View {
     @Bindable var project: SongProject
+    @Environment(\.modelContext) private var modelContext
     @StateObject private var ai = AIService()
+
     @State private var selectedTab: EditorTab = .lyrics
-    @State private var analysis = ""
-    @State private var isShowingModels = false
+    @State private var isShowingSettings = false
     @State private var isShowingFusionBuilder = false
+    @State private var isShowingVersions = false
+    @State private var rewriteTarget: LineAnalysis?
+    @State private var reviewNotes = ""
+    @State private var errorMessage: String?
+    @State private var notice: String?
 
     private let analyzer = CadenceAnalyzer()
 
-    enum EditorTab: String, CaseIterable {
+    enum EditorTab: String, CaseIterable, Identifiable {
         case lyrics = "Lyrics"
-        case prompt = "Prompt"
         case analysis = "Analysis"
+        case prompt = "Prompt"
+        case suno = "Suno"
+
+        var id: String { rawValue }
     }
+
+    private var analysis: LyricAnalysis { analyzer.analyzeSong(project.lyrics) }
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Editor", selection: $selectedTab) {
-                ForEach(EditorTab.allCases, id: \.self) { tab in
+            Picker("Section", selection: $selectedTab) {
+                ForEach(EditorTab.allCases) { tab in
                     Text(tab.rawValue).tag(tab)
                 }
             }
             .pickerStyle(.segmented)
-            .padding()
+            .padding(.horizontal)
+            .padding(.vertical, 8)
 
             switch selectedTab {
-            case .lyrics:
-                lyricsEditor
-            case .prompt:
-                promptEditor
-            case .analysis:
-                analysisView
+            case .lyrics: lyricsTab
+            case .analysis: analysisTab
+            case .prompt: promptTab
+            case .suno: sunoTab
             }
         }
         .navigationTitle(project.title)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button("Analyze Lyrics") {
-                        Task {
-                            analysis = (try? await ai.analyzeLyrics(project.lyrics)) ?? "Analysis unavailable."
-                            selectedTab = .analysis
-                        }
-                    }
-
-                    Button("Model Manager") {
-                        isShowingModels = true
-                    }
-                } label: {
-                    Image(systemName: "sparkles")
-                }
-            }
-        }
-        .sheet(isPresented: $isShowingModels) {
+        .toolbar { toolbarContent }
+        .overlay(alignment: .bottom) { noticeBanner }
+        .sheet(isPresented: $isShowingSettings) {
             ModelManagerView()
         }
         .sheet(isPresented: $isShowingFusionBuilder) {
             FusionBuilderView(project: project)
         }
-        .onChange(of: project.lyrics) {
-            project.updatedAt = .now
+        .sheet(isPresented: $isShowingVersions) {
+            SongVersionsView(project: project)
         }
-        .onChange(of: project.title) {
-            project.updatedAt = .now
+        .sheet(item: $rewriteTarget) { line in
+            LineRewriteView(line: line, song: analysis, preference: project.aiProviderPreference, ai: ai) { replacement in
+                project.lyrics = LyricsEditing.replacingLine(at: line.id, in: project.lyrics, with: replacement)
+            }
+        }
+        .alert("AI Unavailable", isPresented: Binding(
+            get: { errorMessage != nil },
+            set: { if !$0 { errorMessage = nil } }
+        )) {
+            Button("AI Settings") { isShowingSettings = true }
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(errorMessage ?? "")
+        }
+        .onChange(of: project.lyrics) { project.updatedAt = .now }
+        .onChange(of: project.title) { project.updatedAt = .now }
+        .onChange(of: project.soundPrompt) { project.updatedAt = .now }
+        .onChange(of: project.negativePrompt) { project.updatedAt = .now }
+        .onChange(of: project.sunoLyrics) { project.updatedAt = .now }
+    }
+
+    // MARK: Toolbar
+
+    @ToolbarContentBuilder
+    private var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            if ai.isGenerating {
+                ProgressView()
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                Button {
+                    saveVersion(label: nil)
+                } label: {
+                    Label("Save Version", systemImage: "clock.badge.checkmark")
+                }
+                Button {
+                    isShowingVersions = true
+                } label: {
+                    Label("Version History (\(project.versions.count))", systemImage: "clock.arrow.circlepath")
+                }
+
+                Divider()
+
+                Picker(selection: $project.aiProviderPreference) {
+                    ForEach(AIProviderPreference.allCases) { preference in
+                        Text(preference.displayName).tag(preference)
+                    }
+                } label: {
+                    Label("AI Provider", systemImage: "cpu")
+                }
+                Button {
+                    isShowingSettings = true
+                } label: {
+                    Label("AI Settings", systemImage: "gearshape")
+                }
+
+                Divider()
+
+                ShareLink(item: exportText) {
+                    Label("Share Suno Output", systemImage: "square.and.arrow.up")
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .accessibilityLabel("Song options")
         }
     }
 
-    private var lyricsEditor: some View {
-        VStack(alignment: .leading, spacing: 0) {
+    @ViewBuilder
+    private var noticeBanner: some View {
+        if let notice {
+            Text(notice)
+                .font(.footnote.weight(.medium))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .background(.regularMaterial, in: Capsule())
+                .padding(.bottom, 16)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .task(id: notice) {
+                    try? await Task.sleep(for: .seconds(2.5))
+                    withAnimation { self.notice = nil }
+                }
+        }
+    }
+
+    // MARK: Lyrics
+
+    private var lyricsTab: some View {
+        let lines = analysis.lines
+        return VStack(alignment: .leading, spacing: 0) {
             TextField("Song title", text: $project.title)
                 .font(.title2.bold())
                 .textFieldStyle(.plain)
                 .padding(.horizontal)
+                .padding(.top, 4)
 
             TextEditor(text: $project.lyrics)
                 .font(.system(.body, design: .rounded))
-                .padding(.horizontal, 8)
-
-            let lines = analyzer.analyze(project.lyrics)
+                .padding(.horizontal, 12)
+                .overlay(alignment: .topLeading) {
+                    if project.lyrics.isEmpty {
+                        Text("Write your lyrics here.\nLeave a blank line between sections, or use tags like [Verse] and [Chorus].")
+                            .font(.system(.body, design: .rounded))
+                            .foregroundStyle(.tertiary)
+                            .padding(.horizontal, 17)
+                            .padding(.top, 8)
+                            .allowsHitTesting(false)
+                    }
+                }
 
             if !lines.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(lines) { line in
-                            Text("\(line.syllableCount) syllables")
-                                .font(.caption)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 6)
-                                .background(.thinMaterial, in: Capsule())
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Tap a line to rewrite it")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(lines) { line in
+                                Button {
+                                    rewriteTarget = line
+                                } label: {
+                                    CadenceChip(line: line)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
+                        .padding(.horizontal)
+                        .padding(.bottom, 10)
                     }
-                    .padding()
                 }
+                .padding(.top, 6)
+                .background(.bar)
             }
         }
     }
 
-    private var promptEditor: some View {
-        Form {
+    // MARK: Analysis
+
+    private var analysisTab: some View {
+        let song = analysis
+        return List {
+            if song.lines.isEmpty {
+                Section {
+                    Text("Write some lyrics to see cadence, stress and rhyme analysis.")
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                Section {
+                    HStack {
+                        StatCell(value: "\(song.lines.count)", label: "Lines")
+                        StatCell(value: "\(song.totalSyllables)", label: "Syllables")
+                        StatCell(value: "\(song.outOfPocketLines.count)", label: "Off-pocket")
+                    }
+                } footer: {
+                    Text("Syllables, stress and rhyme are estimated from spelling rules, not a pronunciation dictionary. Unusual words may be off by one.")
+                }
+
+                ForEach(song.stanzas) { stanza in
+                    Section {
+                        ForEach(song.lines.filter { $0.stanza == stanza.id }) { line in
+                            Button {
+                                rewriteTarget = line
+                            } label: {
+                                LineAnalysisRow(line: line)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    } header: {
+                        HStack {
+                            Text(stanza.label ?? "Section \(stanza.id + 1)")
+                            Spacer()
+                            Text("avg \(stanza.averageSyllables, specifier: "%.1f") · \(stanza.scheme)")
+                                .font(.caption.monospaced())
+                        }
+                    }
+                }
+            }
+
+            Section {
+                Button {
+                    runAIAnalysis(song)
+                } label: {
+                    Label("Analyze with AI", systemImage: "sparkles")
+                }
+                .disabled(project.lyrics.isEmpty || ai.isGenerating)
+
+                if !project.analysisNotes.isEmpty {
+                    Text(project.analysisNotes)
+                        .font(.callout)
+                        .textSelection(.enabled)
+                }
+            } header: {
+                Text("AI Analysis")
+            } footer: {
+                Text("Uses \(ai.resolve(project.aiProviderPreference).kind.displayName.lowercased()) with the measurements above as constraints.")
+            }
+        }
+    }
+
+    // MARK: Prompt DNA
+
+    private var promptTab: some View {
+        let dna = project.promptDNA
+        return Form {
             Section {
                 Button {
                     isShowingFusionBuilder = true
                 } label: {
                     Label(
-                        project.promptDNA.selectedTags.isEmpty ? "Build with Fusion Engine" : "Edit Fusion",
+                        dna.selectedTags.isEmpty ? "Build with Fusion Engine" : "Edit Fusion",
                         systemImage: "wand.and.stars"
                     )
                 }
-                if !project.promptDNA.selectedTags.isEmpty {
-                    fusionSummary(project.promptDNA)
+                if !dna.selectedTags.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("\(dna.mode.displayName) · \(dna.selectedTags.count) tags")
+                            .font(.caption.bold())
+                        FlowLayout(spacing: 6) {
+                            ForEach(dna.selectedTags) { tag in
+                                Label(tag.name, systemImage: tag.category.symbolName)
+                                    .font(.caption)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.accentColor.opacity(0.12), in: Capsule())
+                            }
+                        }
+                    }
+                    .padding(.vertical, 2)
                 }
             } header: {
-                Text("Dataset-Driven Prompt Generator")
+                Text("Dataset Fusion")
             } footer: {
-                Text("Randomizes or hand-picks tags from 215,240 real Suno dataset tags, weighted by rarity, and translates them into a style prompt. Edit the text below by hand afterward if you want.")
+                Text("Tags come from 215,240 real Suno tags mined from 659,788 songs, picked by rarity and category.")
             }
 
-            Section("Sound Direction (POS)") {
-                TextField("Genre / fusion", text: $project.genre)
-                TextEditor(text: $project.soundPrompt)
-                    .frame(minHeight: 180)
+            Section {
+                Picker("Energy", selection: intentEnergy) {
+                    ForEach(EnergyLevel.allCases) { level in
+                        Text(level.displayName).tag(level)
+                    }
+                }
+                TextField("Vocals (e.g. breathy alto, gang shouts)", text: intentText(\.vocals), axis: .vertical)
+                TextField("Mood", text: intentText(\.mood), axis: .vertical)
+                TextField("Instrumentation", text: intentText(\.instrumentation), axis: .vertical)
+                TextField("Production", text: intentText(\.production), axis: .vertical)
+                TextField("Mix / master", text: intentText(\.mixing), axis: .vertical)
+                TextField("Performance", text: intentText(\.performance), axis: .vertical)
+                TextField("Avoid (added to NEG)", text: intentText(\.avoid), axis: .vertical)
+            } header: {
+                Text("Your Direction")
+            } footer: {
+                Text("Added to the dataset prompt as a short direction line. Leave anything blank to skip it.")
             }
 
-            Section("Negative Prompt (NEG)") {
-                TextEditor(text: $project.negativePrompt)
-                    .frame(minHeight: 140)
+            Section {
+                Button {
+                    generateFromDNA()
+                } label: {
+                    Label("Generate POS & NEG", systemImage: "text.badge.star")
+                }
+                .disabled(dna.selectedTags.isEmpty && dna.intent.isEmpty)
+
+                Button {
+                    reviewPrompt()
+                } label: {
+                    Label("Review Prompt with AI", systemImage: "sparkles")
+                }
+                .disabled(project.soundPrompt.isEmpty || ai.isGenerating)
+
+                if !reviewNotes.isEmpty {
+                    Text(reviewNotes)
+                        .font(.callout)
+                        .textSelection(.enabled)
+                }
+            } footer: {
+                Text("Generating replaces POS and NEG. The previous text is saved as a version first.")
             }
         }
     }
 
-    private func fusionSummary(_ dna: PromptDNA) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("\(dna.mode.displayName) · \(dna.selectedTags.count) tags")
-                .font(.caption.bold())
-            Text(dna.allTagNames.joined(separator: " · "))
+    // MARK: Suno output
+
+    private var sunoTab: some View {
+        Form {
+            OutputSection(
+                title: "Style (POS)",
+                text: $project.soundPrompt,
+                limit: PromptDNAComposer.positiveLimit,
+                minHeight: 160,
+                onCopy: { copy(project.soundPrompt, "Style copied") }
+            )
+            OutputSection(
+                title: "Exclude (NEG)",
+                text: $project.negativePrompt,
+                limit: PromptDNAComposer.negativeLimit,
+                minHeight: 100,
+                onCopy: { copy(project.negativePrompt, "Exclusions copied") }
+            )
+            Section {
+                TextEditor(text: $project.sunoLyrics)
+                    .font(.system(.callout, design: .monospaced))
+                    .frame(minHeight: 220)
+                HStack {
+                    Button {
+                        buildSunoLyrics()
+                    } label: {
+                        Label(project.sunoLyrics.isEmpty ? "Build from Draft" : "Rebuild from Draft", systemImage: "text.alignleft")
+                    }
+                    .disabled(project.lyrics.isEmpty)
+                    Spacer()
+                    Button {
+                        copy(project.sunoLyrics, "Lyrics copied")
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                    }
+                    .disabled(project.sunoLyrics.isEmpty)
+                }
+                .buttonStyle(.borderless)
+            } header: {
+                Text("Lyrics")
+            } footer: {
+                Text("Keeps your [Section] tags, or infers Verse/Chorus from repeated stanzas. Edit freely; your draft on the Lyrics tab is never changed.")
+            }
+        }
+    }
+
+    // MARK: Actions
+
+    private func saveVersion(label: String?) {
+        let version = project.saveVersion(label: label, in: modelContext)
+        show("Saved \(version.displayName)")
+    }
+
+    private func generateFromDNA() {
+        if !project.soundPrompt.isEmpty || !project.negativePrompt.isEmpty {
+            project.saveVersion(label: "Before regenerate", in: modelContext)
+        }
+        let output = PromptDNAComposer.compose(project.promptDNA)
+        project.soundPrompt = output.positive
+        project.negativePrompt = output.negative
+        if let genre = project.promptDNA.selectedTags.first(where: { $0.category == .genre || $0.category == .subgenre }) {
+            project.genre = genre.name
+        }
+        selectedTab = .suno
+        show("Generated from Prompt DNA")
+    }
+
+    private func buildSunoLyrics() {
+        if !project.sunoLyrics.isEmpty {
+            project.saveVersion(label: "Before lyrics rebuild", in: modelContext)
+        }
+        project.sunoLyrics = SunoLyricsFormatter.format(project.lyrics)
+    }
+
+    private func runAIAnalysis(_ song: LyricAnalysis) {
+        Task {
+            do {
+                project.analysisNotes = try await ai.analyzeLyrics(project.lyrics, measurements: song, preference: project.aiProviderPreference)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func reviewPrompt() {
+        Task {
+            do {
+                reviewNotes = try await ai.reviewPrompt(
+                    positive: project.soundPrompt,
+                    negative: project.negativePrompt,
+                    dna: project.promptDNA,
+                    preference: project.aiProviderPreference
+                )
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    private func copy(_ text: String, _ message: String) {
+        Clipboard.copy(text)
+        show(message)
+    }
+
+    private func show(_ message: String) {
+        withAnimation { notice = message }
+    }
+
+    private var exportText: String {
+        """
+        \(project.title)
+
+        STYLE (POS):
+        \(project.soundPrompt)
+
+        EXCLUDE (NEG):
+        \(project.negativePrompt)
+
+        LYRICS:
+        \(project.sunoLyrics.isEmpty ? SunoLyricsFormatter.format(project.lyrics) : project.sunoLyrics)
+        """
+    }
+
+    // MARK: Intent bindings
+
+    private func intentText(_ keyPath: WritableKeyPath<PromptIntent, String>) -> Binding<String> {
+        Binding(
+            get: { project.promptDNA.intent[keyPath: keyPath] },
+            set: { newValue in
+                var dna = project.promptDNA
+                dna.intent[keyPath: keyPath] = newValue
+                project.promptDNA = dna
+                project.updatedAt = .now
+            }
+        )
+    }
+
+    private var intentEnergy: Binding<EnergyLevel> {
+        Binding(
+            get: { project.promptDNA.intent.energy },
+            set: { newValue in
+                var dna = project.promptDNA
+                dna.intent.energy = newValue
+                project.promptDNA = dna
+                project.updatedAt = .now
+            }
+        )
+    }
+}
+
+// MARK: - Components
+
+private struct CadenceChip: View {
+    let line: LineAnalysis
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text("\(line.id + 1)")
+                .foregroundStyle(.secondary)
+            Text("\(line.syllableCount)")
+                .fontWeight(.semibold)
+            if let letter = line.rhymeLetter {
+                Text(letter)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.accentColor)
+            }
+        }
+        .font(.caption.monospacedDigit())
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(line.isOutOfPocket ? Color.orange.opacity(0.18) : Color(.secondarySystemBackground), in: Capsule())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Line \(line.id + 1), \(line.syllableCount) syllables\(line.rhymeLetter.map { ", rhyme \($0)" } ?? "")")
+        .accessibilityHint("Opens line rewrite")
+    }
+}
+
+private struct LineAnalysisRow: View {
+    let line: LineAnalysis
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(line.text)
+                    .font(.callout)
+                Spacer(minLength: 8)
+                Text("\(line.syllableCount)")
+                    .font(.callout.monospacedDigit().weight(.semibold))
+                    .foregroundStyle(line.isOutOfPocket ? .orange : .primary)
+            }
+            HStack(spacing: 10) {
+                Text(line.stressPattern)
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                if let letter = line.rhymeLetter {
+                    Text("\(letter) · \(line.rhymeKind?.rawValue ?? "")")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color.accentColor)
+                }
+                if line.isOutOfPocket {
+                    Label(line.deviation > 0 ? "+\(Int(line.deviation.rounded()))" : "\(Int(line.deviation.rounded()))", systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.orange)
+                }
+            }
+            if !line.internalRhymes.isEmpty {
+                Text("Internal: " + line.internalRhymes.map { "\($0.first)/\($0.second)" }.joined(separator: ", "))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .contentShape(Rectangle())
+    }
+}
+
+private struct StatCell: View {
+    let value: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.title3.weight(.bold).monospacedDigit())
+            Text(label)
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .lineLimit(2)
         }
+        .frame(maxWidth: .infinity)
     }
+}
 
-    private var analysisView: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                if ai.isGenerating {
-                    ProgressView("Analyzing…")
+private struct OutputSection: View {
+    let title: String
+    @Binding var text: String
+    let limit: Int
+    let minHeight: CGFloat
+    let onCopy: () -> Void
+
+    var body: some View {
+        Section {
+            TextEditor(text: $text)
+                .font(.callout)
+                .frame(minHeight: minHeight)
+            HStack {
+                Text("\(text.count) / \(limit)")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(text.count > limit ? .red : .secondary)
+                Spacer()
+                Button(action: onCopy) {
+                    Label("Copy", systemImage: "doc.on.doc")
                 }
-
-                Text(analysis.isEmpty ? "Use the sparkle menu to analyze your lyrics." : analysis)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                .buttonStyle(.borderless)
+                .disabled(text.isEmpty)
             }
-            .padding()
+        } header: {
+            Text(title)
         }
     }
 }

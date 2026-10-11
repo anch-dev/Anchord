@@ -171,7 +171,7 @@ enum SunoPromptGenerator {
 
     // MARK: - Compression
 
-    private static func hardTrim(_ text: String, limit: Int) -> String {
+    static func hardTrim(_ text: String, limit: Int) -> String {
         guard text.count > limit else { return text }
         var cut = String(text.prefix(limit - 1))
         let candidates = [". ", ", ", " "]

@@ -1,25 +1,48 @@
 import Foundation
 
-/// Placeholder for downloaded Hugging Face models.
-///
-/// The app intentionally separates model discovery/download from inference.
-/// Future adapters can use Apple's Core AI / MLX-compatible runtimes or another
-/// supported on-device runtime without changing the songwriting feature layer.
+/// Runs prompts on a downloaded, verified local model through whatever
+/// `LocalInferenceRuntime` is registered. It never pretends: if no model
+/// is installed or no runtime exists, it says exactly that.
 actor LocalModelProvider: AIProvider {
-    let kind: AIProviderKind = .local
+    nonisolated let kind: AIProviderKind = .local
 
-    private(set) var modelIdentifier: String?
+    private let model: InstalledModel?
+    private var loadedModelID: String?
 
-    init(modelIdentifier: String? = nil) {
-        self.modelIdentifier = modelIdentifier
+    init(model: InstalledModel?) {
+        self.model = model
+    }
+
+    /// Status for a given installed model, without loading anything.
+    static func status(for model: InstalledModel?) -> ProviderStatus {
+        guard let model else {
+            return .unavailable("No local model selected. Download one in AI Settings.")
+        }
+        guard FileManager.default.fileExists(atPath: model.fileURL.path) else {
+            return .unavailable("\(model.displayName) is missing from storage. Download it again.")
+        }
+        guard let runtime = LocalRuntimeRegistry.current else {
+            return .unavailable(AIProviderError.localRuntimeMissing.errorDescription ?? "No local runtime.")
+        }
+        let ext = model.fileURL.pathExtension.lowercased()
+        guard runtime.supportedFormats.contains(ext) else {
+            return .unavailable("\(runtime.name) can't load .\(ext) models.")
+        }
+        return .ready
     }
 
     func generate(prompt: String) async throws -> String {
-        // TODO: Connect a downloaded local model runtime.
-        throw AIProviderError.modelUnavailable
-    }
-
-    func select(modelIdentifier: String) {
-        self.modelIdentifier = modelIdentifier
+        guard let model else { throw AIProviderError.modelUnavailable }
+        guard let runtime = LocalRuntimeRegistry.current else { throw AIProviderError.localRuntimeMissing }
+        if loadedModelID != model.id {
+            await runtime.unloadModel()
+            try await runtime.loadModel(at: model.fileURL)
+            loadedModelID = model.id
+        }
+        return try await runtime.generate(
+            prompt: prompt,
+            systemPrompt: AppleFoundationModelProvider.instructions,
+            maxTokens: 768
+        )
     }
 }

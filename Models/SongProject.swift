@@ -19,6 +19,23 @@ final class SongProject {
     var createdAt: Date
     var updatedAt: Date
 
+    /// Suno "LYRICS" field: the lyrics as they'll be pasted into Suno,
+    /// with [Verse]/[Chorus] section tags. Kept separate from `lyrics`
+    /// (the writer's working draft) so formatting for Suno never
+    /// overwrites the draft. Defaults keep SwiftData's lightweight
+    /// migration working for projects saved before this field existed.
+    var sunoLyrics: String = ""
+
+    /// Last AI analysis text, so it survives leaving the song.
+    var analysisNotes: String = ""
+
+    /// Raw value of the `AIProviderPreference` chosen for this song.
+    var aiProviderPreferenceRaw: String = "automatic"
+
+    /// Saved snapshots, newest first when sorted by `createdAt`.
+    @Relationship(deleteRule: .cascade, inverse: \SongVersion.project)
+    var versions: [SongVersion] = []
+
     /// Structured musical intent (selected tags, mode, chaos, song
     /// length) behind the current `soundPrompt`/`negativePrompt`, so the
     /// fusion builder can be reopened later and continue from where it
@@ -56,5 +73,37 @@ final class SongProject {
         self.createdAt = .now
         self.updatedAt = .now
         self.promptDNAData = nil
+    }
+
+    var aiProviderPreference: AIProviderPreference {
+        get { AIProviderPreference(rawValue: aiProviderPreferenceRaw) ?? .automatic }
+        set { aiProviderPreferenceRaw = newValue.rawValue }
+    }
+
+    var sortedVersions: [SongVersion] {
+        versions.sorted { $0.createdAt > $1.createdAt }
+    }
+
+    /// Snapshot the current state as a new version.
+    @discardableResult
+    func saveVersion(label: String? = nil, in context: ModelContext) -> SongVersion {
+        let number = (versions.map(\.number).max() ?? 0) + 1
+        let version = SongVersion(number: number, label: label, snapshotOf: self)
+        context.insert(version)
+        version.project = self
+        return version
+    }
+
+    /// Replace the working state with a saved version. Callers should
+    /// save the current state first if it shouldn't be lost.
+    func restore(_ version: SongVersion) {
+        title = version.title
+        lyrics = version.lyrics
+        soundPrompt = version.soundPrompt
+        negativePrompt = version.negativePrompt
+        sunoLyrics = version.sunoLyrics
+        genre = version.genre
+        promptDNAData = version.promptDNAData
+        updatedAt = .now
     }
 }

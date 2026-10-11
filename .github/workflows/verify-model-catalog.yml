@@ -16,4 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Check catalog against the Hugging Face Hub
-        run: python3 scripts/verify_model_catalog.py --discover
+        run: python3 scripts/verify_model_catalog.py

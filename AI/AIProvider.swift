@@ -16,6 +16,40 @@ enum AIProviderKind: String, CaseIterable, Identifiable, Codable {
     }
 }
 
+/// What the writer asked for. `automatic` prefers Apple Intelligence when
+/// it's available and falls back to the selected local model.
+enum AIProviderPreference: String, CaseIterable, Identifiable, Codable, Sendable {
+    case automatic
+    case appleIntelligence
+    case localModel
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .automatic: "Automatic"
+        case .appleIntelligence: "Apple Intelligence"
+        case .localModel: "Local Model"
+        }
+    }
+}
+
+/// Whether a provider can run right now, and if not, why -- shown to the
+/// writer verbatim instead of failing silently.
+enum ProviderStatus: Equatable, Sendable {
+    case ready
+    case unavailable(String)
+
+    var isReady: Bool { self == .ready }
+
+    var message: String {
+        switch self {
+        case .ready: "Ready"
+        case .unavailable(let reason): reason
+        }
+    }
+}
+
 protocol AIProvider: Sendable {
     var kind: AIProviderKind { get }
     func generate(prompt: String) async throws -> String

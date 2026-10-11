@@ -9,6 +9,7 @@ import SwiftUI
 struct FusionBuilderView: View {
     @Bindable var project: SongProject
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @ObservedObject private var database = TagDatabase.shared
 
     @State private var mode: FusionMode = .blended
@@ -296,15 +297,24 @@ struct FusionBuilderView: View {
     }
 
     private func saveToProject() {
-        project.soundPrompt = generatedPrompt
-        project.negativePrompt = generatedNegative
+        // Keep the writer's Direction from the Prompt tab and layer it onto
+        // exactly the prompt previewed here (no re-roll).
+        let intent = project.promptDNA.intent
+        let output = PromptDNAComposer.apply(intent, positive: generatedPrompt, negative: generatedNegative)
+        if (!project.soundPrompt.isEmpty || !project.negativePrompt.isEmpty),
+           project.soundPrompt != output.positive || project.negativePrompt != output.negative {
+            project.saveVersion(label: "Before fusion update", in: modelContext)
+        }
+        project.soundPrompt = output.positive
+        project.negativePrompt = output.negative
         project.genre = selected.first(where: { $0.category == .genre || $0.category == .subgenre })?.name ?? project.genre
         project.promptDNA = PromptDNA(
             selectedTags: selected,
             mode: mode,
             anchorNames: anchorNames,
             chaosEnabled: chaosOn,
-            songLengthSeconds: songLengthSeconds
+            songLengthSeconds: songLengthSeconds,
+            intent: intent
         )
         project.updatedAt = .now
         dismiss()
