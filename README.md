@@ -12,15 +12,19 @@ The goal is simple: help writers preserve **cadence, pocket, phonetic shape, and
 - A provider abstraction for future local Hugging Face/Core ML/MLX models
 - No required server for the core songwriting workflow
 
-## First milestone
+## What works today
 
-- Song/project library
-- Lyrics editor
-- Syllable and cadence analysis
-- Phonetic-chain suggestions
-- Apple Intelligence lyric actions
-- Structured music-prompt builder
-- Model manager foundation
+- Song library home screen and per-song workspace (Lyrics, Analysis, Prompt, Suno tabs)
+- Rule-based syllable, stress and rhyme analysis (schemes, slant and internal rhyme, off-pocket lines)
+- Dataset-driven Suno prompt engine (Fusion Builder) plus structured Direction in Prompt DNA
+- Separate, editable POS / NEG / LYRICS with copy and share
+- AI line rewrites, lyric analysis and prompt review (Apple Intelligence when available)
+- Version history with restore and copy-as-new-song
+- AI Settings: Apple Intelligence status, device-aware local model recommendations,
+  real Hugging Face links, verified downloads
+
+Not yet: a local inference engine (downloaded models are stored and verified but can't run yet),
+a pronunciation-dictionary phonetic backend, and the macOS target. See `docs/ARCHITECTURE.md`.
 
 ## Dataset-driven Suno prompt engine
 
