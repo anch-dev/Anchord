@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "note": "Every entry is checked against the Hugging Face Hub by scripts/verify_model_catalog.py. Do not add entries by hand without running it.",
+  "models": [
+    {
+      "id": "qwen3-1.7b-q4km",
+      "family": "Qwen3",
+      "displayName": "Qwen3 1.7B",
+      "repository": "unsloth/Qwen3-1.7B-GGUF",
+      "fileName": "Qwen3-1.7B-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 4,
+      "license": "apache-2.0",
+      "strengths": [
+        "brainstorming",
+        "quick rewrites"
+      ],
+      "summary": "Small and fast. Good for quick line ideas and rhyme brainstorming on lower-memory devices."
+    },
+    {
+      "id": "gemma3-1b-q4km",
+      "family": "Gemma",
+      "displayName": "Gemma 3 1B",
+      "repository": "unsloth/gemma-3-1b-it-GGUF",
+      "fileName": "gemma-3-1b-it-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 4,
+      "license": "gemma",
+      "strengths": [
+        "brainstorming",
+        "short rewrites"
+      ],
+      "summary": "Google's smallest Gemma 3. Very light; best for short, simple rewrites."
+    },
+    {
+      "id": "llama3.2-3b-q4km",
+      "family": "Llama",
+      "displayName": "Llama 3.2 3B Instruct",
+      "repository": "bartowski/Llama-3.2-3B-Instruct-GGUF",
+      "fileName": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 6,
+      "license": "llama3.2",
+      "strengths": [
+        "lyric rewriting",
+        "brainstorming"
+      ],
+      "summary": "Balanced 3B model with natural phrasing for lyric rewrites."
+    },
+    {
+      "id": "smollm3-3b-q4km",
+      "family": "SmolLM",
+      "displayName": "SmolLM3 3B",
+      "repository": "unsloth/SmolLM3-3B-GGUF",
+      "fileName": "SmolLM3-3B-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 6,
+      "license": "apache-2.0",
+      "strengths": [
+        "structured prompts",
+        "analysis"
+      ],
+      "summary": "Fully open 3B model from Hugging Face. Solid at following structured instructions."
+    },
+    {
+      "id": "phi4-mini-q4km",
+      "family": "Phi",
+      "displayName": "Phi-4 Mini Instruct",
+      "repository": "unsloth/Phi-4-mini-instruct-GGUF",
+      "fileName": "Phi-4-mini-instruct-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 8,
+      "license": "mit",
+      "strengths": [
+        "lyric analysis",
+        "structured prompts"
+      ],
+      "summary": "Microsoft's 3.8B reasoning-focused model. Strong at analysis and structured output."
+    },
+    {
+      "id": "qwen3-4b-2507-q4km",
+      "family": "Qwen3",
+      "displayName": "Qwen3 4B Instruct 2507",
+      "repository": "unsloth/Qwen3-4B-Instruct-2507-GGUF",
+      "fileName": "Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 8,
+      "license": "apache-2.0",
+      "strengths": [
+        "lyric rewriting",
+        "prompt work",
+        "analysis"
+      ],
+      "summary": "Great all-rounder for lyric rewriting and prompt work. Answers directly without a thinking phase."
+    },
+    {
+      "id": "gemma3-4b-q4km",
+      "family": "Gemma",
+      "displayName": "Gemma 3 4B",
+      "repository": "unsloth/gemma-3-4b-it-GGUF",
+      "fileName": "gemma-3-4b-it-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 8,
+      "license": "gemma",
+      "strengths": [
+        "lyric rewriting",
+        "creative writing"
+      ],
+      "summary": "Expressive creative writer; good for imagery and alternative lines."
+    },
+    {
+      "id": "qwen3-8b-q4km",
+      "family": "Qwen3",
+      "displayName": "Qwen3 8B",
+      "repository": "Qwen/Qwen3-8B-GGUF",
+      "fileName": "Qwen3-8B-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 12,
+      "license": "apache-2.0",
+      "strengths": [
+        "long-form lyrics",
+        "analysis",
+        "prompt work"
+      ],
+      "summary": "Highest quality in the catalog. Needs a high-memory device."
+    },
+    {
+      "id": "llama3.1-8b-q4km",
+      "family": "Llama",
+      "displayName": "Llama 3.1 8B Instruct",
+      "repository": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+      "fileName": "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+      "quantization": "Q4_K_M",
+      "sizeBytes": null,
+      "sha256": null,
+      "minimumMemoryGB": 12,
+      "license": "llama3.1",
+      "strengths": [
+        "long-form lyrics",
+        "rewriting"
+      ],
+      "summary": "Strong 8B writer for full verses and longer rewrites on high-memory devices."
+    }
+  ]
+}

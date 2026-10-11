@@ -1,0 +1,19 @@
+name: Verify model catalog
+
+# Confirms every entry in Resources/ModelCatalog.json points at a real,
+# ungated Hugging Face repository and file, with matching size and sha256.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Resources/ModelCatalog.json"
+      - "scripts/verify_model_catalog.py"
+      - ".github/workflows/verify-model-catalog.yml"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check catalog against the Hugging Face Hub
+        run: python3 scripts/verify_model_catalog.py --discover
