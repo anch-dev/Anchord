@@ -133,12 +133,12 @@ struct CadenceAnalyzer {
         let cleanWords = words.filter { !PhoneticEngine.letters($0).isEmpty }
         let last = cleanWords.last ?? ""
 
-        var internal: [InternalRhyme] = []
+        var internalPairs: [InternalRhyme] = []
         let candidates = cleanWords.dropLast().filter { PhoneticEngine.letters($0).count >= 3 }
         for (i, a) in candidates.enumerated() {
             for b in candidates.dropFirst(i + 1) + [last] {
                 if let kind = PhoneticEngine.rhyme(a, b), kind == .perfect {
-                    internal.append(InternalRhyme(first: a, second: b, kind: kind))
+                    internalPairs.append(InternalRhyme(first: a, second: b, kind: kind))
                 }
             }
         }
@@ -152,7 +152,7 @@ struct CadenceAnalyzer {
             endRhymeTail: PhoneticEngine.rhymeTail(last),
             rhymeLetter: nil,
             rhymeKind: nil,
-            internalRhymes: Array(internal.prefix(4)),
+            internalRhymes: Array(internalPairs.prefix(4)),
             stanza: stanza
         )
     }
