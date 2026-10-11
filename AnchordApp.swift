@@ -7,6 +7,6 @@ struct AnchordApp: App {
         WindowGroup {
             RootView()
         }
-        .modelContainer(for: [SongProject.self, SongVersion.self])
+        .modelContainer(for: [SongProject.self, SongVersion.self, ChatMessage.self])
     }
 }

@@ -36,6 +36,14 @@ final class SongProject {
     @Relationship(deleteRule: .cascade, inverse: \SongVersion.project)
     var versions: [SongVersion] = []
 
+    /// The song's chat with the assistant, oldest first when sorted.
+    @Relationship(deleteRule: .cascade, inverse: \ChatMessage.project)
+    var chatMessages: [ChatMessage] = []
+
+    var sortedChat: [ChatMessage] {
+        chatMessages.sorted { $0.createdAt < $1.createdAt }
+    }
+
     /// Structured musical intent (selected tags, mode, chaos, song
     /// length) behind the current `soundPrompt`/`negativePrompt`, so the
     /// fusion builder can be reopened later and continue from where it

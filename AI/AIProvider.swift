@@ -52,5 +52,12 @@ enum ProviderStatus: Equatable, Sendable {
 
 protocol AIProvider: Sendable {
     var kind: AIProviderKind { get }
-    func generate(prompt: String) async throws -> String
+    /// One self-contained request. `instructions` is the system prompt.
+    func generate(prompt: String, instructions: String) async throws -> String
+}
+
+extension AIProvider {
+    func generate(prompt: String) async throws -> String {
+        try await generate(prompt: prompt, instructions: AnchordPrompts.system)
+    }
 }

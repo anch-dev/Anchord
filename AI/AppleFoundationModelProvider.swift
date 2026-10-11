@@ -7,18 +7,8 @@ import FoundationModels
 struct AppleFoundationModelProvider: AIProvider {
     let kind: AIProviderKind = .appleFoundation
 
-    static let instructions = """
-    You are Anchord, a songwriting assistant.
-
-    Prioritize cadence and performance pocket first, phonetic flow second,
-    and meaning third, unless the writer explicitly asks otherwise.
-    Preserve the user's intent unless asked to change it.
-    Pay attention to syllable count, stressed syllables, phonetic chaining,
-    internal rhyme, end rhyme, and natural spoken phrasing.
-
-    Do not automatically turn a rewrite into generic poetry.
-    Avoid cliché imagery unless the writer explicitly asks for it.
-    """
+    /// Kept for callers that predate `AnchordPrompts`.
+    static var instructions: String { AnchordPrompts.system }
 
     /// Live availability of Apple's on-device model on this device.
     static var status: ProviderStatus {
@@ -42,13 +32,13 @@ struct AppleFoundationModelProvider: AIProvider {
         #endif
     }
 
-    func generate(prompt: String) async throws -> String {
+    func generate(prompt: String, instructions: String) async throws -> String {
         #if canImport(FoundationModels)
         guard Self.status.isReady else { throw AIProviderError.modelUnavailable }
         // A fresh session per request: each task is self-contained, and a
         // long-lived session would keep growing its transcript until it
         // overflowed the model's context window.
-        let session = LanguageModelSession(instructions: Self.instructions)
+        let session = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: prompt)
         return response.content
         #else

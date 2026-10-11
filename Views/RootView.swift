@@ -48,7 +48,7 @@ struct RootView: View {
                 .padding(.bottom, 40)
             }
             .scrollDismissesKeyboard(.interactively)
-            .background(HomeBackground().ignoresSafeArea())
+            .background(AnchordBackground().ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: UUID.self) { id in
                 if let project = projects.first(where: { $0.id == id }) {
@@ -166,33 +166,6 @@ struct RootView: View {
     }
 }
 
-// MARK: - Palette
-
-/// A pair of colors used for card tints and gradients. Each song gets a
-/// stable palette derived from its UUID (not `hashValue`, which changes
-/// between launches).
-struct CardPalette {
-    let start: Color
-    let end: Color
-
-    var gradient: LinearGradient {
-        LinearGradient(colors: [start, end], startPoint: .topLeading, endPoint: .bottomTrailing)
-    }
-
-    static let violet = CardPalette(start: .indigo, end: .purple)
-    static let sunset = CardPalette(start: .pink, end: .orange)
-    static let ocean = CardPalette(start: .teal, end: .blue)
-    static let forest = CardPalette(start: .mint, end: .green)
-    static let ember = CardPalette(start: .orange, end: .red)
-    static let bloom = CardPalette(start: .purple, end: .pink)
-
-    static let all: [CardPalette] = [.violet, .sunset, .ocean, .forest, .ember, .bloom]
-
-    static func forID(_ id: UUID) -> CardPalette {
-        all[Int(id.uuid.0) % all.count]
-    }
-}
-
 extension SongProject {
     /// Non-blank lyric lines.
     var lyricLines: [String] {
@@ -247,26 +220,6 @@ private struct HomeHeader: View {
                     .font(.system(.largeTitle, design: .rounded, weight: .bold))
                     .fixedSize(horizontal: false, vertical: true)
             }
-        }
-    }
-}
-
-private struct HomeBackground: View {
-    var body: some View {
-        ZStack(alignment: .top) {
-            Color(.systemGroupedBackground)
-            RadialGradient(
-                colors: [Color.purple.opacity(0.22), .clear],
-                center: .topLeading,
-                startRadius: 0,
-                endRadius: 420
-            )
-            RadialGradient(
-                colors: [Color.orange.opacity(0.14), .clear],
-                center: .topTrailing,
-                startRadius: 0,
-                endRadius: 360
-            )
         }
     }
 }
@@ -606,15 +559,5 @@ private struct EmptyLibraryCard: View {
         .frame(maxWidth: .infinity)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
         .padding(.top, 12)
-    }
-}
-
-// MARK: - Button style
-
-private struct PressableCardStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }

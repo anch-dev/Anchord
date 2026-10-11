@@ -16,6 +16,8 @@ struct SongEditorView: View {
     @State private var isShowingFusionBuilder = false
     @State private var isShowingVersions = false
     @State private var isShowingLyricPreferences = false
+    @State private var isShowingChat = false
+    @State private var isShowingMacros = false
     @State private var rewriteTarget: LineAnalysis?
     @State private var reviewNotes = ""
     @State private var errorMessage: String?
@@ -28,7 +30,18 @@ struct SongEditorView: View {
         case suno = "Suno"
 
         var id: String { rawValue }
+
+        var symbolName: String {
+            switch self {
+            case .lyrics: "pencil.line"
+            case .analysis: "waveform.path.ecg"
+            case .prompt: "wand.and.stars"
+            case .suno: "music.note.list"
+            }
+        }
     }
+
+    private var palette: CardPalette { CardPalette.forID(project.id) }
 
     private var analysis: LyricAnalysis {
         CadenceAnalyzer(preferences: lyricPreferences.preferences).analyzeSong(project.lyrics)
@@ -36,26 +49,39 @@ struct SongEditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Picker("Section", selection: $selectedTab) {
-                ForEach(EditorTab.allCases) { tab in
-                    Text(tab.rawValue).tag(tab)
+            SongHeader(project: project, palette: palette, analysis: analysis)
+                .padding(.horizontal)
+                .padding(.top, 4)
+
+            EditorTabBar(selection: $selectedTab, palette: palette)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+
+            Group {
+                switch selectedTab {
+                case .lyrics: lyricsTab
+                case .analysis: analysisTab
+                case .prompt: promptTab
+                case .suno: sunoTab
                 }
             }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-
-            switch selectedTab {
-            case .lyrics: lyricsTab
-            case .analysis: analysisTab
-            case .prompt: promptTab
-            case .suno: sunoTab
-            }
+            .scrollContentBackground(.hidden)
         }
-        .navigationTitle(project.title)
+        .background(AnchordBackground(palette: palette).ignoresSafeArea())
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar { toolbarContent }
         .overlay(alignment: .bottom) { noticeBanner }
+        .overlay(alignment: .bottomTrailing) { chatButton }
+        .sheet(isPresented: $isShowingChat) {
+            SongChatView(project: project, ai: ai)
+                .presentationDetents([.medium, .large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+        }
+        .sheet(isPresented: $isShowingMacros) {
+            MacroEditorView()
+        }
         .sheet(isPresented: $isShowingSettings) {
             ModelManagerView()
         }
@@ -118,6 +144,11 @@ struct SongEditorView: View {
                 } label: {
                     Label("Lyric Preferences", systemImage: "slider.horizontal.3")
                 }
+                Button {
+                    isShowingMacros = true
+                } label: {
+                    Label("Command Macros", systemImage: "command")
+                }
                 Picker(selection: $project.aiProviderPreference) {
                     ForEach(AIProviderPreference.allCases) { preference in
                         Text(preference.displayName).tag(preference)
@@ -143,6 +174,24 @@ struct SongEditorView: View {
         }
     }
 
+    private var chatButton: some View {
+        Button {
+            isShowingChat = true
+        } label: {
+            Image(systemName: "bubble.left.and.text.bubble.right.fill")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 58, height: 58)
+                .background(palette.gradient, in: Circle())
+                .shadow(color: palette.start.opacity(0.45), radius: 12, y: 6)
+        }
+        .buttonStyle(PressableCardStyle())
+        .padding(.trailing, 20)
+        .padding(.bottom, selectedTab == .lyrics && !project.lyrics.isEmpty ? 92 : 24)
+        .accessibilityLabel("Song Chat")
+        .accessibilityHint("Chat with the AI to write and fill in this song")
+    }
+
     @ViewBuilder
     private var noticeBanner: some View {
         if let notice {
@@ -164,33 +213,35 @@ struct SongEditorView: View {
 
     private var lyricsTab: some View {
         let lines = analysis.lines
-        return VStack(alignment: .leading, spacing: 0) {
-            TextField("Song title", text: $project.title)
-                .font(.title2.bold())
-                .textFieldStyle(.plain)
-                .padding(.horizontal)
-                .padding(.top, 4)
-
+        return VStack(alignment: .leading, spacing: 12) {
             TextEditor(text: $project.lyrics)
                 .font(.system(.body, design: .rounded))
-                .padding(.horizontal, 12)
+                .scrollContentBackground(.hidden)
+                .padding(10)
                 .overlay(alignment: .topLeading) {
                     if project.lyrics.isEmpty {
-                        Text("Write your lyrics here.\nLeave a blank line between sections, or use tags like [Verse] and [Chorus].")
-                            .font(.system(.body, design: .rounded))
-                            .foregroundStyle(.tertiary)
-                            .padding(.horizontal, 17)
-                            .padding(.top, 8)
-                            .allowsHitTesting(false)
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Write your lyrics here.\nLeave a blank line between sections, or use tags like [Verse] and [Chorus].")
+                                .font(.system(.body, design: .rounded))
+                                .foregroundStyle(.tertiary)
+                            Label("Or open Song Chat and ask Anchord to start it with you.", systemImage: "bubble.left.and.text.bubble.right")
+                                .font(.footnote)
+                                .foregroundStyle(palette.start)
+                        }
+                        .padding(.horizontal, 15)
+                        .padding(.top, 18)
+                        .allowsHitTesting(false)
                     }
                 }
+                .anchordCard()
+                .padding(.horizontal)
 
             if !lines.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text("Tap a line to rewrite it")
-                        .font(.caption2)
+                        .font(.caption2.weight(.semibold))
                         .foregroundStyle(.secondary)
-                        .padding(.horizontal)
+                        .padding(.horizontal, 14)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
                             ForEach(lines) { line in
@@ -202,14 +253,16 @@ struct SongEditorView: View {
                                 .buttonStyle(.plain)
                             }
                         }
-                        .padding(.horizontal)
-                        .padding(.bottom, 10)
+                        .padding(.horizontal, 14)
                     }
                 }
-                .padding(.top, 6)
-                .background(.bar)
+                .padding(.vertical, 10)
+                .anchordCard(cornerRadius: 18)
+                .padding(.horizontal)
+                .padding(.trailing, 70)
             }
         }
+        .padding(.bottom, 12)
     }
 
     // MARK: Analysis
@@ -518,6 +571,93 @@ struct SongEditorView: View {
 }
 
 // MARK: - Components
+
+/// Compact version of the home screen's cards: song icon in its palette,
+/// editable title, and live stats.
+private struct SongHeader: View {
+    @Bindable var project: SongProject
+    let palette: CardPalette
+    let analysis: LyricAnalysis
+
+    var body: some View {
+        HStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(palette.gradient)
+                .frame(width: 56, height: 56)
+                .overlay {
+                    Image(systemName: "music.note")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(.white)
+                }
+                .shadow(color: palette.start.opacity(0.35), radius: 8, y: 4)
+
+            VStack(alignment: .leading, spacing: 3) {
+                TextField("Song title", text: $project.title)
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .textFieldStyle(.plain)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .anchordCard()
+    }
+
+    private var subtitle: String {
+        var parts: [String] = []
+        if !project.genre.isEmpty { parts.append(project.genre) }
+        let lines = analysis.lines.count
+        parts.append(lines == 1 ? "1 line" : "\(lines) lines")
+        if analysis.totalSyllables > 0 { parts.append("\(analysis.totalSyllables) syllables") }
+        parts.append("edited \(project.updatedAt.formatted(.relative(presentation: .named)))")
+        return parts.joined(separator: " · ")
+    }
+}
+
+/// Pill tabs with icons, tinted with the song's palette. Touch targets are
+/// full-height pills rather than a thin segmented control.
+private struct EditorTabBar: View {
+    @Binding var selection: SongEditorView.EditorTab
+    let palette: CardPalette
+    @Namespace private var namespace
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(SongEditorView.EditorTab.allCases) { tab in
+                let isSelected = tab == selection
+                Button {
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.8)) { selection = tab }
+                } label: {
+                    VStack(spacing: 3) {
+                        Image(systemName: tab.symbolName)
+                            .font(.system(size: 15, weight: .semibold))
+                        Text(tab.rawValue)
+                            .font(.caption.weight(.semibold))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .foregroundStyle(isSelected ? Color.white : Color.secondary)
+                    .background {
+                        if isSelected {
+                            Capsule()
+                                .fill(palette.gradient)
+                                .matchedGeometryEffect(id: "tab", in: namespace)
+                        }
+                    }
+                    .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+            }
+        }
+        .padding(4)
+        .background(Color(.secondarySystemGroupedBackground), in: Capsule())
+        .shadow(color: .black.opacity(0.05), radius: 8, y: 3)
+    }
+}
 
 private struct CadenceChip: View {
     let line: LineAnalysis

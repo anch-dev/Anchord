@@ -31,7 +31,7 @@ actor LocalModelProvider: AIProvider {
         return .ready
     }
 
-    func generate(prompt: String) async throws -> String {
+    func generate(prompt: String, instructions: String) async throws -> String {
         guard let model else { throw AIProviderError.modelUnavailable }
         guard let runtime = LocalRuntimeRegistry.current else { throw AIProviderError.localRuntimeMissing }
         if loadedModelID != model.id {
@@ -41,7 +41,7 @@ actor LocalModelProvider: AIProvider {
         }
         return try await runtime.generate(
             prompt: prompt,
-            systemPrompt: AppleFoundationModelProvider.instructions,
+            systemPrompt: instructions,
             maxTokens: 768
         )
     }

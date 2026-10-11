@@ -47,6 +47,10 @@ final class AIService: ObservableObject {
     }
 
     private func run(_ prompt: String, preference: AIProviderPreference) async throws -> String {
+        try await run(prompt, instructions: AnchordPrompts.system, preference: preference)
+    }
+
+    private func run(_ prompt: String, instructions: String, preference: AIProviderPreference) async throws -> String {
         let resolution = resolve(preference)
         guard let provider = resolution.provider else {
             throw AIProviderError.noProviderAvailable(resolution.status.message)
@@ -55,7 +59,7 @@ final class AIService: ObservableObject {
         lastError = nil
         defer { isGenerating = false }
         do {
-            let output = try await provider.generate(prompt: prompt)
+            let output = try await provider.generate(prompt: prompt, instructions: instructions)
             lastProvider = resolution.kind
             return output.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
@@ -65,6 +69,18 @@ final class AIService: ObservableObject {
     }
 
     // MARK: Tasks
+
+    /// One chat turn about a song. The reply may contain ```blocks``` that
+    /// `SongAssistant.apply` writes into the song's tabs.
+    func chat(_ message: String, project: SongProject, history: [ChatMessage], preference: AIProviderPreference) async throws -> String {
+        let prompt = SongAssistant.prompt(
+            for: message,
+            project: project,
+            history: history,
+            preferences: LyricPreferencesStore.shared.preferences
+        )
+        return try await run(prompt, instructions: AnchordPrompts.chat, preference: preference)
+    }
 
     private var preferences: LyricPreferences { LyricPreferencesStore.shared.preferences }
 

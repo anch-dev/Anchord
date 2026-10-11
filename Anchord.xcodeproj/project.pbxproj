@@ -40,6 +40,13 @@
 		27483440445F13AFAEE571CA /* ModelCatalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 912F8DE722C8AD32298E8D2C /* ModelCatalog.json */; };
 		DF2264302FFF9F0D8D2AE72C /* LyricPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */; };
 		4A6AD4DA6506AE85F9DAD893 /* LyricPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */; };
+		E64BC61131053A28331C818D /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C971DD4015B539730819019B /* DesignSystem.swift */; };
+		D3CDF50FCDAB0951C98310E4 /* SongChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E64C2CF51EFA58FB246F4C3 /* SongChatView.swift */; };
+		A1C9C72127A3D8989E46FBC6 /* MacroEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B2B7F0C76B1E49B6E5A5E8 /* MacroEditorView.swift */; };
+		2BDA93C623C43FE40E1830C9 /* AnchordPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEA891F16E81216A5F4CCE4 /* AnchordPrompts.swift */; };
+		82DC59387DBC38593D3817E1 /* SongAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3049C5AF26EE8DEF5DB1FCBB /* SongAssistant.swift */; };
+		AB5B47776EB7D5E001C83AEF /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24C35D38DA492C4A25827E27 /* ChatMessage.swift */; };
+		8CC0AAD922A3DD061B78966A /* CommandMacro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA892404AFD45D76A637AC /* CommandMacro.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +85,13 @@
 		912F8DE722C8AD32298E8D2C /* ModelCatalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ModelCatalog.json; sourceTree = "<group>"; };
 		3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricPreferences.swift; sourceTree = "<group>"; };
 		43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricPreferencesView.swift; sourceTree = "<group>"; };
+		C971DD4015B539730819019B /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		4E64C2CF51EFA58FB246F4C3 /* SongChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongChatView.swift; sourceTree = "<group>"; };
+		95B2B7F0C76B1E49B6E5A5E8 /* MacroEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroEditorView.swift; sourceTree = "<group>"; };
+		6FEA891F16E81216A5F4CCE4 /* AnchordPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnchordPrompts.swift; sourceTree = "<group>"; };
+		3049C5AF26EE8DEF5DB1FCBB /* SongAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongAssistant.swift; sourceTree = "<group>"; };
+		24C35D38DA492C4A25827E27 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		78AA892404AFD45D76A637AC /* CommandMacro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandMacro.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +132,8 @@
 				91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */,
 				A6A10E95A0560034F9EC53BB /* SongVersion.swift */,
 				3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */,
+				24C35D38DA492C4A25827E27 /* ChatMessage.swift */,
+				78AA892404AFD45D76A637AC /* CommandMacro.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -130,6 +146,8 @@
 				4581D1E55789B9A292A0F793 /* LocalModelProvider.swift */,
 				545EE9D22CC68DDA2E52FBED /* AIService.swift */,
 				9B47DD23E9A5B059D6B2942A /* LocalInferenceRuntime.swift */,
+				6FEA891F16E81216A5F4CCE4 /* AnchordPrompts.swift */,
+				3049C5AF26EE8DEF5DB1FCBB /* SongAssistant.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -153,6 +171,9 @@
 				2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */,
 				40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */,
 				43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */,
+				C971DD4015B539730819019B /* DesignSystem.swift */,
+				4E64C2CF51EFA58FB246F4C3 /* SongChatView.swift */,
+				95B2B7F0C76B1E49B6E5A5E8 /* MacroEditorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -300,6 +321,13 @@
 				EEFF63DC3845CB23E70E3978 /* PromptRoleEngine.swift in Sources */,
 				E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */,
 				583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */,
+				8CC0AAD922A3DD061B78966A /* CommandMacro.swift in Sources */,
+				AB5B47776EB7D5E001C83AEF /* ChatMessage.swift in Sources */,
+				82DC59387DBC38593D3817E1 /* SongAssistant.swift in Sources */,
+				2BDA93C623C43FE40E1830C9 /* AnchordPrompts.swift in Sources */,
+				A1C9C72127A3D8989E46FBC6 /* MacroEditorView.swift in Sources */,
+				D3CDF50FCDAB0951C98310E4 /* SongChatView.swift in Sources */,
+				E64BC61131053A28331C818D /* DesignSystem.swift in Sources */,
 				4A6AD4DA6506AE85F9DAD893 /* LyricPreferencesView.swift in Sources */,
 				DF2264302FFF9F0D8D2AE72C /* LyricPreferences.swift in Sources */,
 				A17EB3FB9DD0D041247F68F1 /* SongVersion.swift in Sources */,
