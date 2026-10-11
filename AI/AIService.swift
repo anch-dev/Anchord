@@ -66,15 +66,25 @@ final class AIService: ObservableObject {
 
     // MARK: Tasks
 
-    /// Up to three alternative versions of one line. Priority is
-    /// cadence/pocket, then phonetic flow, then meaning, unless the
-    /// writer's instruction says otherwise.
+    private var preferences: LyricPreferences { LyricPreferencesStore.shared.preferences }
+
+    struct RewriteResult {
+        var suggestions: [String]
+        /// Suggestions dropped because they used a banned word/phrase.
+        var hiddenForBans: Int
+    }
+
+    /// Up to three alternative versions of one line, following the
+    /// writer's Lyric Preferences (default priority: cadence/pocket, then
+    /// phonetic flow, then meaning). Suggestions that use a banned term
+    /// are removed before they reach the UI.
     func rewriteLine(
         _ line: LineAnalysis,
         in song: LyricAnalysis,
         instruction: String,
         preference: AIProviderPreference
-    ) async throws -> [String] {
+    ) async throws -> RewriteResult {
+        let rules = preferences
         let neighbors = song.lines
             .filter { $0.stanza == line.stanza && $0.id != line.id }
             .map { "- \($0.text)" }
@@ -83,10 +93,13 @@ final class AIService: ObservableObject {
         let prompt = """
         Rewrite one lyric line. Give exactly 3 alternatives, one per line, no numbering, no quotes, no commentary.
 
-        Priorities, in order (unless the instruction overrides them):
-        1. Cadence/pocket: keep \(line.syllableCount) syllables (±1) and this stress shape: \(line.stressPattern)
-        2. Phonetic flow: keep the ending rhyming on "\(line.endRhymeTail)"\(line.rhymeLetter.map { " (rhyme group \($0))" } ?? ""), preserve vowel sounds where possible
-        3. Meaning: keep the emotional intent
+        Measured targets:
+        - Cadence/pocket: keep \(line.syllableCount) syllables (±1) and this stress shape: \(line.stressPattern)
+        - Phonetic flow: keep the ending rhyming on "\(line.endRhymeTail)"\(line.rhymeLetter.map { " (rhyme group \($0))" } ?? ""), preserve vowel sounds where possible
+        - Meaning: keep the emotional intent
+
+        Writer's rules (the instruction may override priorities, never bans):
+        \(rules.promptRules)
 
         Writer's instruction: \(instruction.isEmpty ? "Make it land better while keeping the pocket." : instruction)
 
@@ -98,12 +111,13 @@ final class AIService: ObservableObject {
         """
 
         let output = try await run(prompt, preference: preference)
-        return output
+        let candidates = output
             .components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \t-•*\"“”0123456789.)")) }
             .filter { !$0.isEmpty }
             .prefix(3)
-            .map { $0 }
+        let allowed = candidates.filter { rules.bannedTerms(in: $0).isEmpty }
+        return RewriteResult(suggestions: Array(allowed), hiddenForBans: candidates.count - allowed.count)
     }
 
     func analyzeLyrics(_ lyrics: String, measurements: LyricAnalysis, preference: AIProviderPreference) async throws -> String {
@@ -118,7 +132,11 @@ final class AIService: ObservableObject {
         4. end-rhyme scheme and where slant rhyme could replace a weak perfect rhyme
         5. lines that may be awkward to sing, with one concrete fix each
 
-        Be specific and brief. Quote line numbers.
+        Be specific and brief. Quote line numbers. Respect the writer's rules below; point out \
+        any line that breaks them.
+
+        Writer's rules:
+        \(preferences.promptRules)
 
         Measurements:
         \(measurements.constraintSummary)

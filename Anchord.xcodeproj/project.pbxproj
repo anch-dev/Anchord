@@ -38,6 +38,8 @@
 		5F144C54733885DC2111A302 /* LineRewriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */; };
 		7AE81B591CE294BA4BF6B4C2 /* SongVersionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */; };
 		27483440445F13AFAEE571CA /* ModelCatalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 912F8DE722C8AD32298E8D2C /* ModelCatalog.json */; };
+		DF2264302FFF9F0D8D2AE72C /* LyricPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */; };
+		4A6AD4DA6506AE85F9DAD893 /* LyricPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +76,8 @@
 		2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineRewriteView.swift; sourceTree = "<group>"; };
 		40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongVersionsView.swift; sourceTree = "<group>"; };
 		912F8DE722C8AD32298E8D2C /* ModelCatalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ModelCatalog.json; sourceTree = "<group>"; };
+		3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricPreferences.swift; sourceTree = "<group>"; };
+		43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricPreferencesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +117,7 @@
 				B0163B99ADD8FF8922C65BD0 /* LocalModelDescriptor.swift */,
 				91D3B50503AE0BB77FA40AB9 /* MusicTag.swift */,
 				A6A10E95A0560034F9EC53BB /* SongVersion.swift */,
+				3EB7431D9037D15EF7F6DCBF /* LyricPreferences.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -147,6 +152,7 @@
 				1CE4D1D8861AEF7A40A536C5 /* FusionBuilderView.swift */,
 				2A221EFBBF4248A165A8B2FA /* LineRewriteView.swift */,
 				40EF5C36DF14A9CEB01D361E /* SongVersionsView.swift */,
+				43442ED111C3C096B4E059A9 /* LyricPreferencesView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -294,6 +300,8 @@
 				EEFF63DC3845CB23E70E3978 /* PromptRoleEngine.swift in Sources */,
 				E92C84D0B8B4378A602C5733 /* SunoPromptGenerator.swift in Sources */,
 				583024B372D336F950D9CA11 /* FusionBuilderView.swift in Sources */,
+				4A6AD4DA6506AE85F9DAD893 /* LyricPreferencesView.swift in Sources */,
+				DF2264302FFF9F0D8D2AE72C /* LyricPreferences.swift in Sources */,
 				A17EB3FB9DD0D041247F68F1 /* SongVersion.swift in Sources */,
 				9547BAA9055C72022FF0FB34 /* PromptDNAComposer.swift in Sources */,
 				64B601E63158663D47516956 /* SunoLyricsFormatter.swift in Sources */,

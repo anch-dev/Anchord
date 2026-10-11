@@ -8,11 +8,21 @@ struct ModelManagerView: View {
     @ObservedObject private var downloads = ModelDownloadManager.shared
 
     @State private var device: DeviceCapabilities?
+    @State private var isShowingLyricPreferences = false
 
     var body: some View {
         NavigationStack {
             List {
                 appleSection
+                Section {
+                    Button {
+                        isShowingLyricPreferences = true
+                    } label: {
+                        Label("Lyric Preferences", systemImage: "slider.horizontal.3")
+                    }
+                } footer: {
+                    Text("Banned words, preferred vocabulary and style rules every AI provider follows.")
+                }
                 if let device {
                     deviceSection(device)
                     installedSection
@@ -29,6 +39,9 @@ struct ModelManagerView: View {
             }
             .task {
                 device = DeviceCapabilities.current()
+            }
+            .sheet(isPresented: $isShowingLyricPreferences) {
+                LyricPreferencesView()
             }
         }
     }

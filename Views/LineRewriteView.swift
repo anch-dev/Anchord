@@ -14,6 +14,8 @@ struct LineRewriteView: View {
     @State private var instruction = ""
     @State private var suggestions: [String] = []
     @State private var errorMessage: String?
+    @State private var hiddenForBans = 0
+    @State private var isShowingPreferences = false
 
     private static let quickInstructions = [
         "Tighter", "More vivid", "Stronger rhyme", "Simpler words", "More internal rhyme", "Less cliché",
@@ -59,13 +61,21 @@ struct LineRewriteView: View {
                 } header: {
                     Text("Instruction")
                 } footer: {
-                    Text("Keeps cadence and pocket first, then sound, then meaning, unless your instruction says otherwise.")
+                    Text("Follows your Lyric Preferences (\(LyricPreferencesStore.shared.preferences.priority.displayName.lowercased()), banned words, style). Your instruction can change priorities, never bans.")
                 }
 
                 if let errorMessage {
                     Section {
                         Label(errorMessage, systemImage: "exclamationmark.triangle")
                             .foregroundStyle(.orange)
+                    }
+                }
+
+                if hiddenForBans > 0 {
+                    Section {
+                        Label("\(hiddenForBans) suggestion\(hiddenForBans == 1 ? "" : "s") hidden for using a banned word.", systemImage: "nosign")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
 
@@ -86,16 +96,30 @@ struct LineRewriteView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { dismiss() }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isShowingPreferences = true
+                    } label: {
+                        Image(systemName: "slider.horizontal.3")
+                    }
+                    .accessibilityLabel("Lyric Preferences")
+                }
+            }
+            .sheet(isPresented: $isShowingPreferences) {
+                LyricPreferencesView()
             }
         }
     }
 
     private func generate() {
         errorMessage = nil
+        hiddenForBans = 0
         Task {
             do {
-                suggestions = try await ai.rewriteLine(line, in: song, instruction: instruction, preference: preference)
-                if suggestions.isEmpty { errorMessage = "The model didn't return any usable lines. Try again." }
+                let result = try await ai.rewriteLine(line, in: song, instruction: instruction, preference: preference)
+                suggestions = result.suggestions
+                hiddenForBans = result.hiddenForBans
+                if suggestions.isEmpty, hiddenForBans == 0 { errorMessage = "The model didn't return any usable lines. Try again." }
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -116,11 +140,17 @@ private struct SuggestionRow: View {
         let newLast = measured?.words.last ?? ""
         let rhyme = PhoneticEngine.rhyme(originalLast, newLast)
         let sameEnding = PhoneticEngine.letters(originalLast) == PhoneticEngine.letters(newLast) && !newLast.isEmpty
+        let cliches = LyricPreferencesStore.shared.preferences.clichesFound(in: suggestion)
 
         VStack(alignment: .leading, spacing: 8) {
             Text(suggestion)
                 .font(.body)
                 .textSelection(.enabled)
+            if !cliches.isEmpty {
+                Label("Cliché: \(cliches.joined(separator: ", "))", systemImage: "exclamationmark.bubble")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
             HStack(spacing: 12) {
                 Label(delta == 0 ? "\(syllables) syl" : "\(syllables) syl (\(delta > 0 ? "+" : "")\(delta))",
                       systemImage: abs(delta) <= 1 ? "checkmark.circle.fill" : "exclamationmark.circle")

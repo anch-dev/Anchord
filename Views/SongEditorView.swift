@@ -9,17 +9,17 @@ struct SongEditorView: View {
     @Bindable var project: SongProject
     @Environment(\.modelContext) private var modelContext
     @StateObject private var ai = AIService()
+    @ObservedObject private var lyricPreferences = LyricPreferencesStore.shared
 
     @State private var selectedTab: EditorTab = .lyrics
     @State private var isShowingSettings = false
     @State private var isShowingFusionBuilder = false
     @State private var isShowingVersions = false
+    @State private var isShowingLyricPreferences = false
     @State private var rewriteTarget: LineAnalysis?
     @State private var reviewNotes = ""
     @State private var errorMessage: String?
     @State private var notice: String?
-
-    private let analyzer = CadenceAnalyzer()
 
     enum EditorTab: String, CaseIterable, Identifiable {
         case lyrics = "Lyrics"
@@ -30,7 +30,9 @@ struct SongEditorView: View {
         var id: String { rawValue }
     }
 
-    private var analysis: LyricAnalysis { analyzer.analyzeSong(project.lyrics) }
+    private var analysis: LyricAnalysis {
+        CadenceAnalyzer(preferences: lyricPreferences.preferences).analyzeSong(project.lyrics)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -62,6 +64,9 @@ struct SongEditorView: View {
         }
         .sheet(isPresented: $isShowingVersions) {
             SongVersionsView(project: project)
+        }
+        .sheet(isPresented: $isShowingLyricPreferences) {
+            LyricPreferencesView()
         }
         .sheet(item: $rewriteTarget) { line in
             LineRewriteView(line: line, song: analysis, preference: project.aiProviderPreference, ai: ai) { replacement in
@@ -108,6 +113,11 @@ struct SongEditorView: View {
 
                 Divider()
 
+                Button {
+                    isShowingLyricPreferences = true
+                } label: {
+                    Label("Lyric Preferences", systemImage: "slider.horizontal.3")
+                }
                 Picker(selection: $project.aiProviderPreference) {
                     ForEach(AIProviderPreference.allCases) { preference in
                         Text(preference.displayName).tag(preference)
@@ -218,6 +228,17 @@ struct SongEditorView: View {
                         StatCell(value: "\(song.lines.count)", label: "Lines")
                         StatCell(value: "\(song.totalSyllables)", label: "Syllables")
                         StatCell(value: "\(song.outOfPocketLines.count)", label: "Off-pocket")
+                    }
+                    if !song.bannedHits.isEmpty || !song.clicheHits.isEmpty {
+                        HStack {
+                            StatCell(value: "\(song.bannedHits.count)", label: "Banned words")
+                            StatCell(value: "\(song.clicheHits.count)", label: "Clichés")
+                        }
+                    }
+                    Button {
+                        isShowingLyricPreferences = true
+                    } label: {
+                        Label("Lyric Preferences", systemImage: "slider.horizontal.3")
                     }
                 } footer: {
                     Text("Syllables, stress and rhyme are estimated from spelling rules, not a pronunciation dictionary. Unusual words may be off by one.")
@@ -516,10 +537,16 @@ private struct CadenceChip: View {
         .font(.caption.monospacedDigit())
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(line.isOutOfPocket ? Color.orange.opacity(0.18) : Color(.secondarySystemBackground), in: Capsule())
+        .background(chipColor, in: Capsule())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Line \(line.id + 1), \(line.syllableCount) syllables\(line.rhymeLetter.map { ", rhyme \($0)" } ?? "")")
         .accessibilityHint("Opens line rewrite")
+    }
+
+    private var chipColor: Color {
+        if !line.bannedTerms.isEmpty { return Color.red.opacity(0.18) }
+        if line.isOutOfPocket || line.isOutsideTarget || !line.cliches.isEmpty { return Color.orange.opacity(0.18) }
+        return Color(.secondarySystemBackground)
     }
 }
 
@@ -534,7 +561,7 @@ private struct LineAnalysisRow: View {
                 Spacer(minLength: 8)
                 Text("\(line.syllableCount)")
                     .font(.callout.monospacedDigit().weight(.semibold))
-                    .foregroundStyle(line.isOutOfPocket ? .orange : .primary)
+                    .foregroundStyle(line.isOutOfPocket || line.isOutsideTarget ? Color.orange : Color.primary)
             }
             HStack(spacing: 10) {
                 Text(line.stressPattern)
@@ -551,6 +578,21 @@ private struct LineAnalysisRow: View {
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 }
+            }
+            if !line.bannedTerms.isEmpty {
+                Label("Banned: \(line.bannedTerms.joined(separator: ", "))", systemImage: "nosign")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.red)
+            }
+            if !line.cliches.isEmpty {
+                Label("Cliché: \(line.cliches.joined(separator: ", "))", systemImage: "exclamationmark.bubble")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+            }
+            if line.isOutsideTarget {
+                Label("Outside your syllable target", systemImage: "ruler")
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
             }
             if !line.internalRhymes.isEmpty {
                 Text("Internal: " + line.internalRhymes.map { "\($0.first)/\($0.second)" }.joined(separator: ", "))

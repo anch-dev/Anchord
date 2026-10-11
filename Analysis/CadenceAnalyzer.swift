@@ -22,6 +22,14 @@ struct LineAnalysis: Identifiable, Hashable, Sendable {
     let stanza: Int
     /// Syllables above (+) or below (−) the stanza's average.
     var deviation: Double = 0
+    /// Writer-banned words/phrases found in the line.
+    var bannedTerms: [String] = []
+    /// Stock clichés found in the line (when cliché flagging is on).
+    var cliches: [String] = []
+    /// Outside the writer's per-line syllable target, if one is set.
+    var isOutsideTarget: Bool = false
+
+    var hasPreferenceIssues: Bool { !bannedTerms.isEmpty || !cliches.isEmpty || isOutsideTarget }
 
     /// Lines this far from their stanza's average likely fall out of the
     /// pocket when sung over the same melody.
@@ -52,7 +60,9 @@ struct LyricAnalysis: Sendable {
     static let empty = LyricAnalysis(lines: [], stanzas: [])
 
     var totalSyllables: Int { lines.reduce(0) { $0 + $1.syllableCount } }
-    var outOfPocketLines: [LineAnalysis] { lines.filter(\.isOutOfPocket) }
+    var outOfPocketLines: [LineAnalysis] { lines.filter { $0.isOutOfPocket || $0.isOutsideTarget } }
+    var bannedHits: [LineAnalysis] { lines.filter { !$0.bannedTerms.isEmpty } }
+    var clicheHits: [LineAnalysis] { lines.filter { !$0.cliches.isEmpty } }
 
     /// Compact deterministic summary handed to AI providers as
     /// constraints, so rewrites/analysis start from measured facts.
@@ -69,6 +79,9 @@ struct LyricAnalysis: Sendable {
 /// Measurements here are estimates from spelling (see that type's notes);
 /// AI features treat them as constraints rather than replacing them.
 struct CadenceAnalyzer {
+    /// The writer's rules; banned words, clichés and the syllable target
+    /// are flagged per line.
+    var preferences = LyricPreferences()
 
     /// Back-compat entry point used by quick syllable chips.
     func analyze(_ lyrics: String) -> [LineAnalysis] {
@@ -113,7 +126,15 @@ struct CadenceAnalyzer {
 
             let counts = range.map { lines[$0].syllableCount }
             let average = Double(counts.reduce(0, +)) / Double(max(counts.count, 1))
-            for i in range { lines[i].deviation = Double(lines[i].syllableCount) - average }
+            for i in range {
+                lines[i].deviation = Double(lines[i].syllableCount) - average
+                lines[i].bannedTerms = preferences.bannedTerms(in: lines[i].text)
+                lines[i].cliches = preferences.clichesFound(in: lines[i].text)
+                if preferences.targetSyllablesEnabled {
+                    let count = lines[i].syllableCount
+                    lines[i].isOutsideTarget = count < preferences.targetSyllablesMin || count > preferences.targetSyllablesMax
+                }
+            }
 
             summaries.append(StanzaSummary(
                 id: stanzaIndex,
